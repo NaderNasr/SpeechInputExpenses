@@ -1,6 +1,8 @@
 import React from 'react'
 import { Card, CardHeader, Typography, CardContent, Grid, Divider } from '@material-ui/core'
 import Form from './Form/Form'
+import List from './List/List'
+
 import useStyles from './styles'
 
 
@@ -22,7 +24,7 @@ const Main = () => {
             <CardContent className={classes.CardContent}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        {/* <List /> */}
+                        <List/>
                     </Grid>
                 </Grid>
             </CardContent>
