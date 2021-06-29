@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { TextField, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
 import { ExpenseTrackerContext } from '../../../context/context';
 import { v4 as uuidv4 } from 'uuid';
 import { incomeCategories, expenseCategories } from '../../../constants/categories';
 import formateDate from '../../../utils/formateDate'
+import {useSpeechContext} from '@speechly/react-client'
 
 import useStyles from './styles';
 
@@ -14,11 +15,15 @@ const initialState = {
 	date: formateDate(new Date())
 };
 
+
+
+
 const Form = () => {
 	const classes = useStyles();
 	const [ formData, setFormData ] = useState(initialState);
-	console.log(formData);
+	// console.log(formData);
 	const { addTrans } = useContext(ExpenseTrackerContext);
+	const {segment} = useSpeechContext()
 
 	const createTrans = () => {
 		const trans = { ...formData, amount: Number(formData.amount), id: uuidv4() };
@@ -26,13 +31,33 @@ const Form = () => {
 		setFormData(initialState);
 	};
 
+	useEffect(() => {
+		if(segment){
+			if(segment.intent.intent === 'add_expense'){
+				setFormData({...formData, type: 'Expense'})
+			} else if(segment.intent.intent === 'add_income'){
+				setFormData({...formData, type: 'Income'})
+			} else if(segment.isFinal && segment.intent.intent === "create_transaction") {
+				return createTrans()
+			} else if (segment.isFinal && segment.intent.intent === "cancel_transaction") {
+				return setFormData(initialState)
+			}
+
+			segment.entities.forEach((e) => {
+				console.log(e.value)
+			})
+		}
+	}, [segment])
+
     const selectedCategories = formData.type === 'Income' ? incomeCategories  : expenseCategories
 
 	return (
 		<Grid container spacing={2}>
 			<Grid item xs={12}>
 				<Typography variant="subtitle2" align="center" gutterBottom>
-					...
+					{segment && segment.words.map((w) => w.value).join(" ")}
+						
+					
 				</Typography>
 			</Grid>
 			<Grid item x={6}>

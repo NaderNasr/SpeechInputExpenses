@@ -9,16 +9,7 @@ const List = () => {
     //const globalState = useContext(ExpenseTrackerContext)
     const {deleteTrans, transactions} = useContext(ExpenseTrackerContext)
 
-    console.log(deleteTrans)
-    // const transactions = [
-    //     {
-    //         id: 1,
-    //         type: 'Income',
-    //         category: 'pets',
-    //         amount: '50',
-    //         date: new Date()
-    //     }
-    // ]
+    
     return (
         <MUIList dense={false} className={classes.list}>
             {transactions.map((trans) => (
