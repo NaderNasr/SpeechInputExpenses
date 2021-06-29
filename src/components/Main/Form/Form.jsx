@@ -23,6 +23,7 @@ const Form = () => {
 	const { segment } = useSpeechContext();
 
 	const createTrans = () => {
+		
 		const trans = { ...formData, amount: Number(formData.amount), id: uuidv4() };
 		addTrans(trans);
 		setFormData(initialState);
@@ -43,12 +44,17 @@ const Form = () => {
 
 				segment.entities.forEach((e) => {
 					// console.log(e.value)
-					const category = `${e.value.charAt(0)}${e.value.slice(1).toLowerCase()}`
+					const category = `${e.value.charAt(0)}${e.value.slice(1).toLowerCase()}`;
 					switch (e.type) {
 						case 'amount':
 							setFormData({ ...formData, amount: e.value });
 							break;
 						case 'category':
+							if (incomeCategories.map((iC) => iC.type).includes(category)) {
+								setFormData({ ...formData, type: 'Income', category });
+							} else if (expenseCategories.map((iC) => iC.type).includes(category)) {
+								setFormData({ ...formData, type: 'Expense', category });
+							}
 							setFormData({ ...formData, category });
 							break;
 						case 'date':
@@ -59,6 +65,9 @@ const Form = () => {
 							break;
 					}
 				});
+				if (segment.isFinal && formData.amount && formData.category && formData.type && formData.date) {
+					createTrans();
+				}
 			}
 		},
 		[ segment ]
