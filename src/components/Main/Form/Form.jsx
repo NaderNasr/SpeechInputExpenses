@@ -23,7 +23,7 @@ const Form = () => {
 	const { segment } = useSpeechContext();
 
 	const createTrans = () => {
-		
+		if (Number.isNaN(Number(formData.amount)) || !formData.date.includes('-')) return;
 		const trans = { ...formData, amount: Number(formData.amount), id: uuidv4() };
 		addTrans(trans);
 		setFormData(initialState);
